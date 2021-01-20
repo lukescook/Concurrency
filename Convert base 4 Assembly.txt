@@ -1,4 +1,4 @@
-             BR      main   ;ID:906771     
+             BR      main        
 digit:   .BLOCK  1          ;global variable #1c
 temp:    .WORD   0
 result:  .WORD   0
