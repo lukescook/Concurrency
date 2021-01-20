@@ -1,0 +1,50 @@
+             BR      main   ;ID:906771     
+digit:   .BLOCK  1          ;global variable #1c
+temp:    .WORD   0
+result:  .WORD   0
+msg1:    .ASCII "Please input a number in base 4: \x00"
+msg2:    .ASCII "The decimal equivalent is \x00"
+msg3:    .ASCII "\nDo you want to input another number (answer y or n)? \x00"
+msg4:    .ASCII "Thank you. Good-bye \x00"
+;
+main:    STRO    msg1,d
+         CHARI   digit,d     ;cin >> digit
+         LDA     0x0000,i    
+while:   LDBYTEA digit,d     ;while (digit != 'enter')
+         CPA     10,i       
+         BREQ    endWh
+         LDA     result,d    ;)mutiply the current total by 4
+         ASLa                ;)this doesn't do anyting first time round
+         ASLa                ;)
+         ADDa    temp,d      ;add the previous digit
+         STA     result,d
+         LDA     0x0000,i
+         LDBYTEA digit,d     ;convert the latest digit convert to a number and put into temp
+         SUBa    48,i
+         STA     temp,d      
+         CHARI   digit,d     ;cin >> digit
+         BR      while       
+endWh:   LDA     result,d    ;multiple by 4 for the last time
+         ASLa
+         ASLa
+         ADDa    temp,d      ;and add the last digit not multipled by 4
+         STA     result,d
+         STRO    msg2,d
+         DECO    result,d    ;then print answer
+         STRO    msg3,d      ;another go ?
+         CHARI   digit,d
+         LDA     0x0000,i
+         LDBYTEA digit,d
+         CPA     "n",i
+         BREQ    endif
+buffer:  CHARI   digit,d     ;clear the keyboard buffer
+         LDBYTEA digit,d
+         CPA     10,i       
+         BRNE    buffer
+         LDA     0x0000,i
+         STA     temp,d      ;clear memory
+         STA     result,d
+         BR      main        ;go and have another go
+endif:   STRO    msg4,d      ;all done
+         STOP                
+         .END
